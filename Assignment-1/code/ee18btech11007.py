@@ -61,12 +61,11 @@ ax[2][1].stem(range(0,N),np.angle(DFT(x)))
 ax[2][1].set_title(r'$\angle{X(k)}$')
 ax[2][1].grid()
 
-
-#If using termux
 plt.savefig('../figs/ee18btech11007.png')
 plt.savefig('../figs/ee18btech11007.eps')
+#If using termux
 subprocess.run(shlex.split("termux-open ../figs/ee18btech11007.pdf"))
-else
+
 plt.show()
 
 
