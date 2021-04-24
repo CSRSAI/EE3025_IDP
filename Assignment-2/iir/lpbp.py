@@ -1,20 +1,38 @@
-import numpy as np
-#If using termux
-import subprocess
-import shlex
-#end if
-
-def lp_stable_cheb(epsilon,N):
-  beta=(((1+epsilon**2)**(0.5)+1)/epsilon)**(1/N)
-  r1=( beta**2 -1)/(2*beta)
-  r2= (beta**2+1)/(2*beta)
-  u= 1
-  for n in range(int(N/2)):
-    phi= np.pi/2 + (2*n+1)*np.pi/(2*N)
-    v= np.array([1,-2*r1*np.cos(phi) , r1**2 * np.cos(phi)**2 + r2**2* np.sin(phi)**2])
-    p=np.convolve(v,u,mode='full')
-    u=p
-  G= np.abs(np.polyval(p,1j))/((1+epsilon**2)**(0.5))
-  return p,G
-
-#print(lp_stable_cheb(0.1,6))
+def lpbp(p,Omega0,B,Omega_p2):
+	import numpy as np
+	#This function transforms the lowpass stable filter obtained
+    #from the Chebyschev approximation to the bandpass
+    #equivalent
+    #[num,den,G] = lpbp(p,Omega0,B,Omega_p2)
+    #Omega0 and B are the lowpass-bandpass transformation parameters
+    #and Omega_p2 is the lower limit of the passband, used
+    #to evaluate the gain G_bp
+    #H(s) = G/p(s) is the stable low pass Cheybyschev approximation
+    #Hbp(s) = G_bp*num(s)/den(s) is the corresponding bandpass stable
+    #filter
+     
+	N = len(p)
+	const = np.array([1,0,Omega0**2])
+	const = const.flatten()
+	#v = const
+	v = np.array([1,0,Omega0**2])
+	v = v.flatten()
+	
+	if N > 2:
+		for i in range(N-1):
+			M = len(v)
+			v[M-i-2] = v[M-i-2] + p[i+1]*(B**(i+1))
+			if i < N-2:
+				v = np.convolve(const,v)
+		den = v
+		
+	elif N == 2:
+		M = len(v)
+		v[M-2] = v[M-2] + p[N-1]*B
+		den = v
+	else :
+		den = p
+	
+	num = np.hstack((1,np.zeros((1,N-1)).ravel()))
+	G_bp = abs(np.polyval(den,1j*Omega_p2)/(np.polyval(num,1j*Omega_p2)))
+	return num,den,G_bp
