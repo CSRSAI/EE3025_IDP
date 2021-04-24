@@ -23,4 +23,4 @@ while m > 1 and K[m-2] != 1:
     if m > 1:
         K[m-2] = v[m-1]
     C[m-1] = c[m-1]
-print(C,K)
+
