@@ -5,6 +5,9 @@ import shlex
 #end if
 
 def lp_stable_cheb(epsilon,N):
+  #This function gives the low pass stable filter
+    #for the Chebyschev approximation based upon
+    #the design parameters epsilon and N
   beta=(((1+epsilon**2)**(0.5)+1)/epsilon)**(1/N)
   r1=( beta**2 -1)/(2*beta)
   r2= (beta**2+1)/(2*beta)
@@ -17,4 +20,3 @@ def lp_stable_cheb(epsilon,N):
   G= np.abs(np.polyval(p,1j))/((1+epsilon**2)**(0.5))
   return p,G
 
-#print(lp_stable_cheb(0.1,6))
