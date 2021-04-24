@@ -17,9 +17,9 @@ def cheb(N):
       p=np.convolve(np.array([2,0]), v , mode='full')
       m= len(p)
       n=len(u)
-      w= p + np.append(np.zeros(m-n),u)
+      w = p + np.hstack((np.zeros((1,m-n)).ravel(),u))
       u=v
       v=w
   return w
 
-#print(cheb(0))
+
